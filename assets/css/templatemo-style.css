@@ -1264,7 +1264,7 @@ section.buttons .container-fluid {
     border-bottom: 0;
     cursor: pointer;
     display: block;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 300;
     padding: 15px 0px;
 }
@@ -1344,7 +1344,7 @@ section.buttons .container-fluid {
 
 #menu > ul > li > ul a,
 #menu > ul > li > ul span {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 #menu > ul > li > ul > li {
