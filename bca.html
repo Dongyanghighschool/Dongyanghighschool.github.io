@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8 퍼즐 문제 실습</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            margin: 20px auto;
+            width: 315px;
+        }
+        .tile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            border: 1px solid #000;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .empty {
+            background-color: #ddd;
+            cursor: default;
+        }
+        #instructions {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #score {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        #goal-state {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        #goal-container {
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            grid-gap: 2px;
+            margin: 10px auto;
+            width: 165px;
+        }
+        .goal-tile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            font-size: 14px;
+            border: 1px solid #000;
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+    <h1>8 퍼즐 문제 실습</h1>
+    <div id="puzzle-container"></div>
+    <div id="instructions">타일을 클릭하여 빈칸으로 이동시키세요!</div>
+    <div id="score">현재 평가 함수 값: 0</div>
+    <div id="goal-state">
+        <strong>목표 상태:</strong>
+        <div id="goal-container"></div>
+    </div>
+    <script>
+        const initialState = [
+            [2, 8, 3],
+            [1, 6, 4],
+            [7, 0, 5] // 0은 빈칸을 의미합니다
+        ];
+
+        const goalState = [
+            [1, 2, 3],
+            [8, 0, 4],
+            [7, 6, 5] // 목표 상태
+        ];
+
+        const puzzleContainer = document.getElementById('puzzle-container');
+        const goalContainer = document.getElementById('goal-container');
+        const scoreDiv = document.getElementById('score');
+
+        let puzzleState = JSON.parse(JSON.stringify(initialState)); // 초기 상태 복사
+
+        function renderPuzzle() {
+            puzzleContainer.innerHTML = '';
+            puzzleState.forEach((row, rowIndex) => {
+                row.forEach((tile, colIndex) => {
+                    const tileDiv = document.createElement('div');
+                    tileDiv.className = 'tile';
+                    if (tile === 0) {
+                        tileDiv.classList.add('empty');
+                    } else {
+                        tileDiv.textContent = tile;
+                        tileDiv.addEventListener('click', () => moveTile(rowIndex, colIndex));
+                    }
+                    puzzleContainer.appendChild(tileDiv);
+                });
+            });
+            updateScore();
+        }
+
+        function renderGoalState() {
+            goalContainer.innerHTML = '';
+            goalState.forEach(row => {
+                row.forEach(tile => {
+                    const tileDiv = document.createElement('div');
+                    tileDiv.className = 'goal-tile';
+                    tileDiv.textContent = tile === 0 ? '' : tile;
+                    goalContainer.appendChild(tileDiv);
+                });
+            });
+        }
+
+        function moveTile(row, col) {
+            const emptyPos = findEmptyTile();
+            const [emptyRow, emptyCol] = emptyPos;
+
+            if (
+                (row === emptyRow && Math.abs(col - emptyCol) === 1) ||
+                (col === emptyCol && Math.abs(row - emptyRow) === 1)
+            ) {
+                // 스왑
+                puzzleState[emptyRow][emptyCol] = puzzleState[row][col];
+                puzzleState[row][col] = 0;
+                renderPuzzle();
+                checkGoalState();
+            }
+        }
+
+        function findEmptyTile() {
+            for (let row = 0; row < puzzleState.length; row++) {
+                for (let col = 0; col < puzzleState[row].length; col++) {
+                    if (puzzleState[row][col] === 0) {
+                        return [row, col];
+                    }
+                }
+            }
+        }
+
+        function checkGoalState() {
+            if (JSON.stringify(puzzleState) === JSON.stringify(goalState)) {
+                alert('축하합니다! 목표 상태를 달성했습니다!');
+            }
+        }
+
+        function updateScore() {
+            let score = 0;
+            for (let row = 0; row < puzzleState.length; row++) {
+                for (let col = 0; col < puzzleState[row].length; col++) {
+                    if (puzzleState[row][col] !== 0 && puzzleState[row][col] !== goalState[row][col]) {
+                        score++;
+                    }
+                }
+            }
+            scoreDiv.textContent = `현재 평가 함수 값: ${score}`;
+        }
+
+        renderPuzzle();
+        renderGoalState();
+    </script>
+</body>
+</html>
