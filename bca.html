@@ -157,7 +157,7 @@
             let score = 0;
             for (let row = 0; row < puzzleState.length; row++) {
                 for (let col = 0; col < puzzleState[row].length; col++) {
-                    if (puzzleState[row][col] !== 0 && puzzleState[row][col] !== goalState[row][col]) {
+                    if (puzzleState[row][col] === goalState[row][col]) {
                         score++;
                     }
                 }
