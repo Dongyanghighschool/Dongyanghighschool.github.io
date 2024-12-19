@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자리 배치</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px auto;
+            width: 500px;
+        }
+        .cell {
+            border: 1px solid black;
+            padding: 20px;
+            text-align: center;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+        .row-gap {
+            grid-row-gap: 30px;
+        }
+        #startButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>이쪽이 앞이에요~^^</h1>
+    <div class="grid row-gap" id="grid">
+        <!-- 자리 배치 셀들이 여기에 추가됩니다 -->
+    </div>
+    <button id="startButton">자리 배치 시작</button>
+
+    <script>
+        const names = [
+            '오현 1', '김주화 2', '김은주 3', '김진혁 4', '손정아 5', '김상희 6', '김기성 7', '박경진 8',
+            '이현수 9', '박연숙 10', '조영수 11', '이효상 12', '노성용 13', '박현숙 17', '김아름 18', '정호재 19',
+            '김민정 14', '박보상 15', '윤상태 16', '오재석 20', '김민지 21', '이승민 25', '강민구 26', '김기진 27',
+            '강경훈 28', '염성군 29', '김정연 22', '대명은 23', '이선화 24', '이동원 30', '김수아 31', '김진상 32'
+        ];
+
+        // 순서를 섞습니다
+        names.sort(() => Math.random() - 0.5);
+
+        const assignOrder = [3, 4, 2, 5, 1, 6, 0, 7];
+        const grid = document.getElementById('grid');
+        const startButton = document.getElementById('startButton');
+        let idx = 0;
+        let step = 0;
+
+        // 4x8 격자 초기화
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 4; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                grid.appendChild(cell);
+            }
+        }
+
+        const cells = document.querySelectorAll('.cell');
+
+        function assignRow(row) {
+            for (let col = 0; col < 4; col++) {
+                const cellIndex = row * 4 + col;
+                cells[cellIndex].innerText = names[idx++];
+            }
+        }
+
+        function nextStep() {
+            if (step < assignOrder.length) {
+                const row = assignOrder[step];
+                assignRow(row);
+                step++;
+                
+                if (step % 2 === 0 && step < assignOrder.length) {
+                    setTimeout(nextStep, 2000);
+                } else {
+                    setTimeout(nextStep, 500);
+                }
+            } else {
+                alert('모든 자리가 배치되었습니다.');
+            }
+        }
+
+        startButton.addEventListener('click', () => {
+            step = 0;
+            idx = 0;
+            cells.forEach(cell => cell.innerText = ''); // 초기화
+            setTimeout(nextStep, 1000);
+        });
+    </script>
+</body>
+</html>
