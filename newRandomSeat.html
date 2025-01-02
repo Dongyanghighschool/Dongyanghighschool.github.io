@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>자리 배치</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 30px;
+    }
+    .grid {
+      display: grid;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      border: 1px solid black;
+      padding: 20px;
+      text-align: center;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+    #controls {
+      margin: 10px auto;
+      width: 500px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    #namesInput {
+      width: 300px;
+      height: 100px;
+    }
+    #startButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>이쪽이 앞이에요~^^</h1>
+  
+  <div id="controls">
+    <div>
+      <label for="colsInput">가로 칸 수:</label>
+      <input type="number" id="colsInput" value="4" min="1">
+    </div>
+    <div>
+      <label for="rowsInput">세로 칸 수:</label>
+      <input type="number" id="rowsInput" value="8" min="1">
+    </div>
+  </div>
+
+  <!-- 기본값으로 기존 names 내용을 넣어주기 -->
+  <textarea id="namesInput">
+오현 1
+김주화 2
+김은주 3
+김진혁 4
+손정아 5
+김상희 6
+김기성 7
+박경진 8
+이현수 9
+박연숙 10
+조영수 11
+이효상 12
+노성용 13
+박현숙 17
+김아름 18
+정호재 19
+김민정 14
+박보상 15
+윤상태 16
+오재석 20
+김민지 21
+이승민 25
+강민구 26
+김기진 27
+강경훈 28
+염성군 29
+김정연 22
+대명은 23
+이선화 24
+이동원 30
+김수아 31
+김진상 32
+</textarea>
+
+  <button id="startButton">자리 배치 시작</button>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const startButton = document.getElementById('startButton');
+    const grid = document.getElementById('grid');
+    const colsInput = document.getElementById('colsInput');
+    const rowsInput = document.getElementById('rowsInput');
+    const namesInput = document.getElementById('namesInput');
+
+    // 무작위 셔플 함수
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // 버튼 클릭 시 동작
+    startButton.addEventListener('click', () => {
+      // 기존 grid 내용 초기화
+      grid.innerHTML = '';
+
+      // 사용자가 입력한 컬럼 수, 로우 수를 가져오기
+      const cols = parseInt(colsInput.value, 10);
+      const rows = parseInt(rowsInput.value, 10);
+
+      // 입력된 이름들을 줄바꿈 기준으로 분할 후 양쪽 공백 제거
+      let names = namesInput.value.split('\n').map(name => name.trim()).filter(Boolean);
+
+      // 무작위 셔플
+      shuffle(names);
+
+      // CSS 그리드 컬럼 수 조정
+      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+      // 총 칸 수 = rows * cols
+      let totalCells = rows * cols;
+
+      // 필요 시 names가 totalCells보다 적으면 나머지를 빈칸으로 채우거나,
+      // names가 더 많다면 일부분만 사용하도록 하기
+      if (names.length < totalCells) {
+        // 부족할 경우 빈 자리 처리 - 원하는 방식을 적용할 수 있음
+        while (names.length < totalCells) {
+          names.push('');
+        }
+      } else if (names.length > totalCells) {
+        // 넘칠 경우 잘라내기
+        names = names.slice(0, totalCells);
+      }
+
+      // 각각의 셀 생성
+      for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.textContent = names[i] || '';
+        grid.appendChild(cell);
+      }
+    });
+  </script>
+</body>
+</html>
